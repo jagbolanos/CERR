@@ -123,7 +123,7 @@ newFileNamesC = {};
 
 whatInfo = what(path);
 for i = 1:length(whatInfo.m)
-    newFileNamesC = {newFileNamesC{:}, [path '\' whatInfo.m{i}]};
+    newFileNamesC = {newFileNamesC{:}, [path '/' whatInfo.m{i}]};
 end
 
 mfilesC = {mfilesCinput{:}, newFileNamesC{:}};
@@ -141,7 +141,7 @@ dirInfo(indexToRemove) = [];
 
 for i=1:length(dirInfo) % skip first 2 (they are '.' and '..')
     if dirInfo(i).isdir
-        subdirNamesC = {subdirNamesC{:}, [path '\' dirInfo(i).name]};
+        subdirNamesC = {subdirNamesC{:}, [path '/' dirInfo(i).name]};
     end
 end
 return
@@ -166,11 +166,11 @@ function printFunctionInfo(outputFileName, mfilesC, categoryStr)
 
 
 % get file path, whether passed into the function already or not:
-if strfind(outputFileName,'\')
+if strfind(outputFileName,'/')
     str = outputFileName;
 else
     s = what;
-    str = [s.path '\' outputFileName];
+    str = [s.path '/' outputFileName];
 end
 
 %add '.txt' if it's not already there:
@@ -454,13 +454,13 @@ function [data, subData] = getFunctionInfo(fun, fileSubFunC, begLineNum)
 data(1:5) = {{}};
 
 % put the name of the function into its place in data.
-if isempty(strfind(fun,'\')) %the name of the function does not include its path
+if isempty(strfind(fun,'/')) %the name of the function does not include its path
     data(6) = {fun};
 else % we need to extract the name from the path.
     rest = fun;
-    while ~isempty(strfind(rest,'\'))
-        [partOfPath, rest] = strtok(rest,'\');
-        rest = rest(2:end); % to get rid of the leading '\'
+    while ~isempty(strfind(rest,'/'))
+        [partOfPath, rest] = strtok(rest,'/');
+        rest = rest(2:end); % to get rid of the leading '/'
     end
     data{6} = strtok(rest,'.'); % this is the function name.
 end
@@ -672,7 +672,7 @@ for i = 1:size(wordlets,2)
             data{3} = {data{3}{1,:}, functionName; data{3}{2,:}, functionPath};
         end
 
-    elseif ~isempty(findstr(type, '\')) | ~isempty(findstr(type,'/')) %then 'type' is a pathname for the function
+    elseif ~isempty(findstr(type, '/')) | ~isempty(findstr(type,'/')) %then 'type' is a pathname for the function
         if strcmp(type,which(fun))  % path of this fun is same as master fun
             if ~strcmp(currentWord,fun) % then this is a subfunction.
                 type = 'subfunction';
