@@ -71,13 +71,13 @@ h = findobj('tag', 'IMRTPGui');
 fieldNames = {{'beamNum'}, {'beamModality'}, {'beamEnergy'}, {'isocenter', 'x'}, {'isocenter', 'y'}, {'isocenter', 'z'}, ...
     {'isodistance'}, {'arcAngle'}, {'couchAngle'}, {'collimatorAngle'}, {'gantryAngle'}, {'beamDescription'}, ...
     {'beamletDelta_x'}, {'beamletDelta_y'}, {'dateOfCreation'}, {'beamType'}, ...
-    {'zRel'}, {'xRel'}, {'yRel'}, {'sigma_100'}};
+    {'zRel'}, {'xRel'}, {'yRel'}, {'sigma_100'}, {'xFieldSize'}, {'zFieldSize'}};
 
 % fieldDefaults = {beamNum, 'photons', 18, planC{indexS.scan}.scanInfo(1).xOffset, planC{indexS.scan}.scanInfo(1).yOffset, 0, 100, 0, 0, 0, ...
 %              0, 'IMRTP test', 1, 1, 5, date, 'QIB', 'IM', 0, IM.beams(beamNum).isodistance * sindeg(IM.beams(beamNum).gantryAngle), IM.beams(beamNum).isodistance * cosdeg(IM.beams(beamNum).gantryAngle)};
-fieldIsEditable = [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1];
-fieldIsNum      = [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1];
-fieldChoices = {{}, {'photons'}, {6,18}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {'IM'}, {}, {}, {}, {}};
+fieldIsEditable = [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1,0,0];
+fieldIsNum      = [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1,1,1];
+fieldChoices = {{}, {'photons'}, {6,18}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {'IM'}, {}, {}, {}, {}, {}, {}};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %QIB params
@@ -1478,7 +1478,7 @@ global planC;
 indexS = planC{end};
 
 fieldDefaults = {beamNum, 'photons', 6, 0, 0, 0, 100, 0, 0, 0, ...
-    0, 'IM beam', 1, 1, 'date', 'IM', 0, 0, 0, 0.4};
+    0, 'IM beam', 1, 1, 'date', 'IM', 0, 0, 0, 0.4,10,10};
 beam = [];
 for i=1:length(fieldNames)
     fN = fieldNames{i};
@@ -1492,7 +1492,7 @@ global planC;
 indexS = planC{end};
 autoFields = {beamNum, 'photons', 6, 'COM', 'COM', 'COM', 100, 0, 0, 0, ...
     0, 'IM beam', 1, 1, date, 'IM', 0, beam.isodistance * sindeg(beam.gantryAngle),...
-    beam.isodistance * cosdeg(beam.gantryAngle), 0.4};
+    beam.isodistance * cosdeg(beam.gantryAngle), 0.4,10,10};
 
 for i=1:length(fieldNames)
     if isAuto(i)
