@@ -120,6 +120,9 @@ edgeS = getTargetSurfacePoints(IM);
 %Get ROI StructureList
 [structROIV, sampleRateV] = getROIStructureList(IM);
 
+disp('using the modified surface edge')
+[edgeS.rows edgeS.cols edgeS.slices] = fieldsize(102, 40);
+
 %Set PB vectors, determine which PBs are required to cover the target.
 IM = getPBList(IM, edgeS);
 
