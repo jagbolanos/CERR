@@ -121,7 +121,7 @@ edgeS = getTargetSurfacePoints(IM);
 [structROIV, sampleRateV] = getROIStructureList(IM);
 
 disp('using the modified surface edge')
-[edgeS.rows edgeS.cols edgeS.slices] = getRectangularSurface(IM, planC);
+IM = getRectangularSurface(IM, planC);
 
 %Set PB vectors, determine which PBs are required to cover the target.
 IM = getPBList(IM, edgeS);
@@ -237,7 +237,7 @@ for i = 1 : length(IM.beams)
     end
     tic
     [CTTraceS, RTOGPBVectorsM, RTOGPBVectorsM_MC, PBMaskM, rowPBV, colPBV, xPBPosV, yPBPosV] = ...
-        getPBRayData(edgeS, IM.beams(i), IM.params.numCTSamplePts, IM.params.xyDownsampleIndex, getAssociatedScan(IM.assocScanUID));
+        getPBRayData(IM.beams(i).edgeS, IM.beams(i), IM.params.numCTSamplePts, IM.params.xyDownsampleIndex, getAssociatedScan(IM.assocScanUID));
     toc
 
     IM.beams(i).RTOGPBVectorsM_MC = RTOGPBVectorsM_MC;

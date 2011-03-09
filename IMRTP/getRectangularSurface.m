@@ -1,37 +1,39 @@
-function [nrows, ncols, nslices] = getRectangularSurface(IM, planC)
+function IM = getRectangularSurface(IM, planC)
 indexS = planC{end};
 
-%convert the field from xz plante to cols vs slices
-cols = round(IM.beams.xFieldSize / planC{indexS.scan}.uniformScanInfo.grid1Units);
-slices = round(IM.beams.zFieldSize / planC{indexS.scan}.uniformScanInfo.sliceThickness);
+for i = 1 : length(IM.beams)
+    %get the number of voxels across the x-plane
+    nX = size(-IM.beams(i).xFieldSize/2:planC{indexS.scan}.uniformScanInfo.grid1Units:IM.beams(i).xFieldSize/2, 2);
 
-%adjust for calculations
-if mod(cols,2) == 1
-    cols = cols + 1;
+    %get the number of voxels across the z-plane
+    nZ = size(-IM.beams(i).zFieldSize/2:planC{indexS.scan}.uniformScanInfo.sliceThickness:IM.beams(i).zFieldSize/2, 2);
+
+    %create an empty vector of the all the x coordinates for the points on the
+    %plane
+    xV = zeros(1,nX*nZ);
+    j = 1;
+    for v=-IM.beams(i).xFieldSize/2:planC{indexS.scan}.uniformScanInfo.grid1Units:IM.beams(i).xFieldSize/2
+        xV(j:j+nZ-1) = repmat(v,1,nZ);
+        j = j + nZ;
+    end
+
+    %for each vector of x coordinates associate the corresponding z coordinate
+    zV = IM.beams(i).isocenter.z + repmat(-IM.beams(i).zFieldSize/2:planC{indexS.scan}.uniformScanInfo.sliceThickness:IM.beams(i).zFieldSize/2,1,nX);
+
+    %the y plane is fixed
+    %yV = repmat(0,1,nX*nZ);
+
+
+    beamxV = IM.beams(i).isocenter.x + xV * cosd(-IM.beams(i).gantryAngle);
+    beamyV = IM.beams(i).isocenter.y + xV * sind(-IM.beams(i).gantryAngle);
+    
+    %scatter(newxV, newyV);
+
+    %transform the coordinates from xyz to rcs and then round
+    [rowsV colsV slicesV] = xyztom(beamxV, beamyV, zV, 1, planC, 'uniform');
+    IM.beams(i).edgeS.rows = round(rowsV);
+    IM.beams(i).edgeS.cols = round(colsV);
+    IM.beams(i).edgeS.slices = round(slicesV);
 end
-
-if mod(slices,2) == 1
-    slices = slices + 1;
-end
-
-%get the isocenter so we can place the field at it
-[misocenter.r misocenter.c misocenter.s] = xyztom([IM.beams.isocenter.x],[IM.beams.isocenter.y],[IM.beams.isocenter.z],1,planC,'uniform');
-misocenter.r = round(misocenter.r);
-misocenter.c = round(misocenter.c);
-misocenter.s = round(misocenter.s);
-
-ncols = zeros(1,cols*slices);
-i = 1;
-for v=(misocenter.c-cols/2+1):(misocenter.c+cols/2)
-    ncols(i:i+slices-1) = repmat(v,1,slices);
-    i = i + slices;
-end
-
-%for each vector of cols associate with the corresponding slices
-nslices = repmat((misocenter.s-slices/2+1):(misocenter.s+slices/2),1,cols);
-
-%the row is fixed as it is a plane along cols vs. slices
-nrows = repmat(misocenter.r,1,cols*slices);
-
 
 end
