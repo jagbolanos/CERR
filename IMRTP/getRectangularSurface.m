@@ -1,4 +1,17 @@
 function IM = getRectangularSurface(IM, planC)
+%"getRectangularSurface"
+%   
+%       Creates a rectangular surface for each beam source depending on the
+%       specified xFieldSize and zFieldSize of the beam and the gantry
+%       angle. The field diagonals cross at the isocenter
+%
+%
+%
+%Usage:
+%   IM = getRectangularSurface(IM, planC)
+%
+%
+
 indexS = planC{end};
 
 for i = 1 : length(IM.beams)
@@ -20,10 +33,7 @@ for i = 1 : length(IM.beams)
     %for each vector of x coordinates associate the corresponding z coordinate
     zV = IM.beams(i).isocenter.z + repmat(-IM.beams(i).zFieldSize/2:planC{indexS.scan}.uniformScanInfo.sliceThickness:IM.beams(i).zFieldSize/2,1,nX);
 
-    %the y plane is fixed
-    %yV = repmat(0,1,nX*nZ);
-
-
+ 
     beamxV = IM.beams(i).isocenter.x + xV * cosd(-IM.beams(i).gantryAngle);
     beamyV = IM.beams(i).isocenter.y + xV * sind(-IM.beams(i).gantryAngle);
     
@@ -31,8 +41,12 @@ for i = 1 : length(IM.beams)
 
     %transform the coordinates from xyz to rcs and then round
     [rowsV colsV slicesV] = xyztom(beamxV, beamyV, zV, 1, planC, 'uniform');
-    IM.beams(i).edgeS.rows = round(rowsV);
-    IM.beams(i).edgeS.cols = round(colsV);
+    %for precision issues it is better not to round xy, anyways the indices
+    %are never used as a pure index
+    IM.beams(i).edgeS.rows = rowsV;
+    IM.beams(i).edgeS.cols = colsV;
+    %if not rounded it will yield an error in getPBRays since the index
+    %value is used
     IM.beams(i).edgeS.slices = round(slicesV);
 end
 
