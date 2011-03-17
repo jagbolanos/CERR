@@ -19,7 +19,7 @@ for i = 1 : length(IM.beams)
     nX = size(-IM.beams(i).xFieldSize/2:planC{indexS.scan}.uniformScanInfo.grid1Units:IM.beams(i).xFieldSize/2, 2);
 
     %get the number of voxels across the z-plane
-    nZ = size(-IM.beams(i).zFieldSize/2:planC{indexS.scan}.uniformScanInfo.sliceThickness:IM.beams(i).zFieldSize/2, 2);
+    nZ = size(-IM.beams(i).zFieldSize/2:planC{indexS.scan}.uniformScanInfo.sliceThickness:IM.beams(i).zFieldSize/2-planC{indexS.scan}.uniformScanInfo.sliceThickness, 2);
 
     %create an empty vector of the all the x coordinates for the points on the
     %plane
@@ -31,7 +31,7 @@ for i = 1 : length(IM.beams)
     end
 
     %for each vector of x coordinates associate the corresponding z coordinate
-    zV = IM.beams(i).isocenter.z + repmat(-IM.beams(i).zFieldSize/2:planC{indexS.scan}.uniformScanInfo.sliceThickness:IM.beams(i).zFieldSize/2,1,nX);
+    zV = IM.beams(i).isocenter.z + repmat(-IM.beams(i).zFieldSize/2:planC{indexS.scan}.uniformScanInfo.sliceThickness:IM.beams(i).zFieldSize/2-planC{indexS.scan}.uniformScanInfo.sliceThickness,1,nX);
 
  
     beamxV = IM.beams(i).isocenter.x + xV * cosd(-IM.beams(i).gantryAngle);
